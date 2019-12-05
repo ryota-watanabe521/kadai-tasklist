@@ -11,7 +11,13 @@
 |
 */
 
-Route::get('/', 'TasksController@index');
+//2019.12.06 こわいけど、以下を試す
+Route::get('/', function () {
+    return view('welcome');
+});
+
+//2019.12.06　ひとまず下記を無効化　トップページを検討
+//Route::get('/', 'TasksController@index');
 
 Route::resource('tasks', 'TasksController');
 //以下は全てresourceに含まれている内容
@@ -31,3 +37,7 @@ Route::resource('tasks', 'TasksController');
 //Route::get('tasks/create', 'TasksController@create')->name('tasks.create');
 //　editは更新用のフォームページ
 //Route::get('takes/{id}/edit', 'TasksController@edit')->name('tasks.edit');
+
+// ユーザ登録
+Route::get('signup', 'Auth\RegisterController@showRegistrationForm')->name('signup.get');
+Route::post('signup', 'Auth\RegisterController@register')->name('signup.post');
