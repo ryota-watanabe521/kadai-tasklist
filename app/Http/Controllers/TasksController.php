@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Task; //追加
+use App\User; //追加
 
 class TasksController extends Controller
 {
@@ -17,11 +18,20 @@ class TasksController extends Controller
     //getでtasks/にアクセスされた場合の「一覧表示処理」
     public function index()
     {
-        $tasks = Task::all();
+        //$tasks = Task::all(); //これは前の課題時のコード
         
-        return view('tasks.index',[
-            'tasks' => $tasks,
-        ]);
+         $data = [];
+         if (\Auth::check()) {
+             $user = \Auth::user();
+             $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
+            
+             $data = [
+                 'user' => $user,
+                 'tasks' => $tasks,
+             ];
+        }
+        
+        return view('tasks.index',$data);
     }
 
     /**
@@ -51,10 +61,18 @@ class TasksController extends Controller
             'content' =>'required|max:191',
             ]);
         
-        $task = new Task;
-        $task->status = $request->status;
-        $task->content = $request->content;
-        $task->save();
+        $request->user()->tasks()->create([
+            'status' => $request->status,
+            'content' => $request->content,
+            'user_id' => $request->user_id,
+        ]);
+        
+        
+        // $task = new Task;
+        // $task->status = $request->status;
+        // $task->content = $request->content;
+        // $task->user_id = $request->user_id;
+        // $task->save();
         
         return redirect('/');
     }

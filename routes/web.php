@@ -11,15 +11,16 @@
 |
 */
 
-//2019.12.06 こわいけど、以下を試す
-Route::get('/', function () {
-    return view('welcome');
+
+
+//2019.12.10　カリキュラム9で出てきた（最初はwelecomeに飛ぶ感じだった）
+Route::get('/', 'TasksController@index');
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::resource('tasks', 'TasksController');
+    Route::resource('users', 'UsersController',['only'=>['index','show']]);
 });
 
-//2019.12.06　ひとまず下記を無効化　トップページを検討
-//Route::get('/', 'TasksController@index');
-
-Route::resource('tasks', 'TasksController');
 //以下は全てresourceに含まれている内容
 //CRUD
 // タスクの個別詳細ページ表示
